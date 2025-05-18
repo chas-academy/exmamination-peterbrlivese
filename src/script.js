@@ -1,48 +1,40 @@
-// Arrayer för att spara transaktioner
+// Arrayer för inkomster och utgifter
 const income = [];
 const expenses = [];
 
-// Referenser till HTML-element
+// Hämta element från DOM
 const descInput = document.getElementById("desc");
 const amountInput = document.getElementById("amount");
 const incomeBtn = document.getElementById("incomeBtn");
 const expenseBtn = document.getElementById("expenseBtn");
 const incomeList = document.getElementById("incomeList");
 const expenseList = document.getElementById("expenseList");
-const transactionList = document.getElementById("transactionList");
 const balanceSpan = document.getElementById("balance");
 
-// Funktion för att uppdatera alla listor och saldo
+// Funktion för att uppdatera listorna och saldo
 function updateUI() {
-  // Töm listorna
   incomeList.innerHTML = "";
   expenseList.innerHTML = "";
-  transactionList.innerHTML = "";
 
-  // Variabler för saldo
   let balance = 0;
 
-  // Lägg till inkomster i listor
-  income.forEach((item) => {
+  // Visa inkomster
+  income.forEach(item => {
     const li = document.createElement("li");
     li.textContent = `${item.description}: +${item.amount} kr`;
-    li.classList.add("income");
     incomeList.appendChild(li);
-    transactionList.appendChild(li.cloneNode(true));
     balance += item.amount;
   });
 
-  // Lägg till utgifter i listor
-  expenses.forEach((item) => {
+  // Visa utgifter
+  expenses.forEach(item => {
     const li = document.createElement("li");
     li.textContent = `${item.description}: -${item.amount} kr`;
-    li.classList.add("expense");
     expenseList.appendChild(li);
-    transactionList.appendChild(li.cloneNode(true));
     balance -= item.amount;
   });
 
-  // Uppdatera saldo
+  // Visa saldo
   balanceSpan.textContent = balance;
 }
 
@@ -51,28 +43,27 @@ function addTransaction(type) {
   const description = descInput.value.trim();
   const amount = parseFloat(amountInput.value);
 
-  if (description === "" || isNaN(amount)) {
-    alert("Fyll i både beskrivning och ett giltigt belopp.");
+  if(description === "" || isNaN(amount)) {
+    alert("Vänligen fyll i beskrivning och ett giltigt belopp.");
     return;
   }
 
-  // Inkludera type i transaktionsobjektet
   const transaction = { description, amount, type };
 
-  if (type === "income") {
+  if(type === "income") {
     income.push(transaction);
-  } else if (type === "expense") {
+  } else {
     expenses.push(transaction);
   }
 
-  // Rensa inputfält
+  // Rensa fälten
   descInput.value = "";
   amountInput.value = "";
 
-  // Uppdatera gränssnitt
+  // Uppdatera sidan
   updateUI();
 }
 
-// Eventlyssnare för knappar
+// Event-lyssnare på knapparna
 incomeBtn.addEventListener("click", () => addTransaction("income"));
 expenseBtn.addEventListener("click", () => addTransaction("expense"));
