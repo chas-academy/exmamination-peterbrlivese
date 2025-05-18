@@ -1,4 +1,5 @@
 // Arrayer för att spara transaktioner
+const transactions = [];
 const income = [];
 const expenses = [];
 
@@ -19,27 +20,23 @@ function updateUI() {
   expenseList.innerHTML = "";
   transactionList.innerHTML = "";
 
-  // Variabler för saldo
+  // Variabel för saldo
   let balance = 0;
 
-  // Lägg till inkomster i listor
-  income.forEach((item) => {
+  // Gå igenom alla transaktioner
+  transactions.forEach((item) => {
     const li = document.createElement("li");
-    li.textContent = `${item.description}: +${item.amount} kr`;
-    li.classList.add("income");
-    incomeList.appendChild(li);
-    transactionList.appendChild(li.cloneNode(true));
-    balance += item.amount;
-  });
+    li.textContent = `${item.description}: ${item.type === "income" ? "+" : "-"}${item.amount} kr`;
+    li.classList.add(item.type);
+    transactionList.appendChild(li);
 
-  // Lägg till utgifter i listor
-  expenses.forEach((item) => {
-    const li = document.createElement("li");
-    li.textContent = `${item.description}: -${item.amount} kr`;
-    li.classList.add("expense");
-    expenseList.appendChild(li);
-    transactionList.appendChild(li.cloneNode(true));
-    balance -= item.amount;
+    if (item.type === "income") {
+      incomeList.appendChild(li.cloneNode(true));
+      balance += item.amount;
+    } else {
+      expenseList.appendChild(li.cloneNode(true));
+      balance -= item.amount;
+    }
   });
 
   // Uppdatera saldo
@@ -56,8 +53,10 @@ function addTransaction(type) {
     return;
   }
 
-  const transaction = { description, amount };
+  const transaction = { description, amount, type };
 
+  // Lägg till i rätt arrayer
+  transactions.push(transaction);
   if (type === "income") {
     income.push(transaction);
   } else if (type === "expense") {
